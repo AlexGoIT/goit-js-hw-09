@@ -7,7 +7,7 @@ const hours = document.querySelector('span[data-hours]');
 const minutes = document.querySelector('span[data-minutes]');
 const seconds = document.querySelector('span[data-seconds]');
 
-
+const timerInput = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('button[data-start]');
 startBtn.disabled = true;
 
@@ -22,7 +22,7 @@ const options = {
     const today = new Date();
     interval = selectedDates[0] - today;
 
-    if (interval < 0) {
+    if (interval <= 0) {
       interval = 0;
       Notiflix.Notify.failure('Please choose a date in the future');
       return;
@@ -36,12 +36,16 @@ const options = {
 const fpr = flatpickr('#datetime-picker', options);
 
 startBtn.addEventListener('click', () => {
+  startBtn.disabled = true;
+  timerInput.disabled = true;
+
   const timer = setInterval(() => {
     interval -= 1000;
 
     if (interval <= 0) {
       clearInterval(timer);
       Notiflix.Notify.success('Timer is over');
+      timerInput.disabled = false;
       return;
     }
 
