@@ -2,10 +2,10 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
-const days = document.querySelector('span[data-days]');
-const hours = document.querySelector('span[data-hours]');
-const minutes = document.querySelector('span[data-minutes]');
-const seconds = document.querySelector('span[data-seconds]');
+const daysField = document.querySelector('span[data-days]');
+const hoursField = document.querySelector('span[data-hours]');
+const minutesField = document.querySelector('span[data-minutes]');
+const secondsField = document.querySelector('span[data-seconds]');
 
 const timerInput = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('button[data-start]');
@@ -19,21 +19,24 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    const today = new Date();
-    interval = selectedDates[0] - today;
-
-    if (interval <= 0) {
-      interval = 0;
-      Notiflix.Notify.failure('Please choose a date in the future');
-      return;
-    }
-
-    viewTimer();
-    startBtn.disabled = false;
+    initTimerInterval(selectedDates);
   },
 };
 
-const fpr = flatpickr('#datetime-picker', options);
+flatpickr('#datetime-picker', options);
+
+function initTimerInterval(selectedDates) {
+  const today = new Date();
+  interval = selectedDates[0] - today;
+
+  if (interval <= 0) {
+    Notiflix.Notify.failure('Please choose a date in the future');
+    return;
+  }
+
+  viewTimer();
+  startBtn.disabled = false;
+}
 
 startBtn.addEventListener('click', () => {
   startBtn.disabled = true;
@@ -54,12 +57,16 @@ startBtn.addEventListener('click', () => {
 });
 
 function viewTimer() {
-  const timer = convertMs(interval);
+  const { days, hours, minutes, seconds } = convertMs(interval);
 
-  days.textContent = timer.days < 10 ? `0${timer.days}` : timer.days;
-  hours.textContent = timer.hours < 10 ? `0${timer.hours}` : timer.hours;
-  minutes.textContent = timer.minutes < 10 ? `0${timer.minutes}` : timer.minutes;
-  seconds.textContent = timer.seconds < 10 ? `0${timer.seconds}` : timer.seconds;
+  daysField.textContent = formatNumber(days);
+  hoursField.textContent = formatNumber(hours);
+  minutesField.textContent = formatNumber(minutes);
+  secondsField.textContent = formatNumber(seconds);
+}
+
+function formatNumber(num) {
+  return num < 10 ? `0${num}` : num;
 }
 
 function convertMs(ms) {
