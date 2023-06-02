@@ -2,7 +2,7 @@ import Notiflix from 'notiflix';
 
 const form = document.querySelector('.form');
 
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', e => {
   e.preventDefault();
 
   let delay = Number(e.target.elements.delay.value);
@@ -13,6 +13,8 @@ form.addEventListener('submit', (e) => {
     createPromise(i, delay).then(onSuccess).catch(onError);
     delay += step;
   }
+
+  form.reset();
 });
 
 function createPromise(position, delay) {
